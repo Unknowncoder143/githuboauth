@@ -1,0 +1,644 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0b0f17">
+  <title>WebVibe AI — GitHub Connect</title>
+
+  <style>
+    :root {
+      --bg: #0b0f17;
+      --panel: #141b26;
+      --border: #293449;
+      --text: #f1f5f9;
+      --muted: #9caec4;
+      --accent: #4f8cff;
+      --success: #34d399;
+      --danger: #fb7185;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      padding: 24px 16px;
+      display: grid;
+      place-items: center;
+      background:
+        radial-gradient(ellipse at top, #172849 0%, var(--bg) 55%);
+      color: var(--text);
+      font-family: Inter, system-ui, -apple-system, sans-serif;
+    }
+
+    button, a { font: inherit; }
+
+    .app {
+      width: 100%;
+      max-width: 760px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .brand {
+      font-size: 23px;
+      font-weight: 850;
+      letter-spacing: -1px;
+    }
+
+    .brand span { color: var(--accent); }
+
+    .pill {
+      padding: 7px 11px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .panel {
+      padding: clamp(20px, 5vw, 36px);
+      background: rgba(20, 27, 38, .96);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      box-shadow: 0 25px 90px #0005;
+    }
+
+    .hero { text-align: center; }
+
+    .github-logo {
+      width: 66px;
+      height: 66px;
+      display: grid;
+      place-items: center;
+      margin: 0 auto 18px;
+      border: 1px solid #39465b;
+      border-radius: 20px;
+      background: #202b3c;
+      font-size: 34px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(27px, 6vw, 39px);
+      letter-spacing: -1.3px;
+    }
+
+    .subtitle {
+      max-width: 470px;
+      margin: 12px auto 25px;
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 14px;
+    }
+
+    .btn {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 16px;
+      border: 1px solid transparent;
+      border-radius: 11px;
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 750;
+      transition: .2s;
+    }
+
+    .btn:hover { filter: brightness(1.1); transform: translateY(-1px); }
+    .btn:disabled { opacity: .55; cursor: wait; transform: none; }
+
+    .btn-light { background: #f1f5f9; color: #101827; }
+    .btn-blue { background: var(--accent); color: white; }
+    .btn-dark { background: #202b3c; color: var(--text); border-color: #354258; }
+    .btn-red { background: #351d2a; color: #fda4af; border-color: #633044; }
+
+    .status {
+      margin-top: 18px;
+      padding: 13px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: #0b111d;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+      overflow-wrap: anywhere;
+    }
+
+    .status.ok { color: var(--success); }
+    .status.error { color: #fda4af; }
+
+    .hidden { display: none !important; }
+
+    .section {
+      margin-top: 25px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+    }
+
+    .section h2 { font-size: 17px; margin: 0 0 15px; }
+
+    .profile {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin: 28px 0;
+      padding: 16px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: #0e1521;
+    }
+
+    .avatar {
+      width: 66px;
+      height: 66px;
+      border-radius: 50%;
+      border: 2px solid #425570;
+      object-fit: cover;
+      background: #202b3c;
+    }
+
+    .profile-name { font-size: 18px; font-weight: 750; }
+    .muted { color: var(--muted); font-size: 13px; margin-top: 5px; }
+    .profile-links { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
+    .text-link { color: #82adff; font-size: 13px; text-decoration: none; }
+    .text-link:hover { text-decoration: underline; }
+
+    .repo-list { display: grid; gap: 10px; }
+
+    .repo {
+      display: block;
+      padding: 15px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: #0e1521;
+      color: var(--text);
+      text-decoration: none;
+      overflow-wrap: anywhere;
+    }
+
+    .repo:hover { border-color: var(--accent); }
+    .repo-name { color: #82adff; font-weight: 700; }
+    .repo-description { color: var(--muted); font-size: 13px; line-height: 1.5; margin-top: 7px; }
+    .repo-meta { color: var(--muted); font-size: 12px; margin-top: 10px; }
+    .empty { color: var(--muted); text-align: center; padding: 18px 0; font-size: 14px; }
+
+    .code-box {
+      margin: 15px 0;
+      padding: 20px 12px;
+      border: 1px dashed #4c6590;
+      border-radius: 13px;
+      background: #0b111d;
+      text-align: center;
+    }
+
+    .device-code {
+      font-size: clamp(24px, 7vw, 34px);
+      font-weight: 850;
+      letter-spacing: 5px;
+      color: #91b8ff;
+      overflow-wrap: anywhere;
+    }
+
+    .hint { font-size: 12px; color: var(--muted); line-height: 1.6; }
+    footer { text-align: center; margin-top: 18px; color: #718198; font-size: 12px; }
+
+    @media (max-width: 480px) {
+      .pill { display: none; }
+      .profile { align-items: flex-start; }
+      .avatar { width: 54px; height: 54px; }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="app">
+    <header class="topbar">
+      <div class="brand">WebVibe <span>AI</span></div>
+      <div class="pill">Developer workspace</div>
+    </header>
+
+    <section class="panel">
+      <div class="hero">
+        <div class="github-logo" aria-hidden="true">⌘</div>
+        <h1>Connect your GitHub</h1>
+        <p class="subtitle">
+          Authorize GitHub to view your profile and public repositories.
+          Connect your developer account to your WebVibe AI workspace.
+        </p>
+      </div>
+
+      <section id="connectSection">
+        <button id="connectBtn" class="btn btn-light">
+          <span aria-hidden="true">◉</span>
+          Continue with GitHub
+        </button>
+
+        <div id="deviceSection" class="hidden section">
+          <h2>Authorize this device</h2>
+          <p class="muted">
+            Open GitHub, enter the code below, and approve the request.
+            Return to this page after authorization.
+          </p>
+
+          <div class="code-box">
+            <div id="deviceCode" class="device-code">--------</div>
+          </div>
+
+          <a id="verifyBtn" class="btn btn-blue"
+             href="https://github.com/login/device"
+             target="_blank" rel="noopener noreferrer">
+            Open GitHub authorization
+          </a>
+
+          <p class="hint">
+            Keep this page open while authorization is pending.
+            Never share your device code with another person.
+          </p>
+
+          <button id="cancelBtn" class="btn btn-dark">
+            Cancel authorization
+          </button>
+        </div>
+      </section>
+
+      <div id="status" class="status" role="status" aria-live="polite">
+        Ready to connect.
+      </div>
+
+      <section id="profileSection" class="hidden">
+        <div class="profile">
+          <img id="avatar" class="avatar" alt="GitHub profile avatar">
+          <div>
+            <div id="displayName" class="profile-name">GitHub user</div>
+            <div id="username" class="muted"></div>
+            <div class="profile-links">
+              <a id="profileLink" class="text-link" target="_blank"
+                 rel="noopener noreferrer">View profile ↗</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <h2>Your public repositories</h2>
+          <div id="repoList" class="repo-list"></div>
+          <button id="loadMoreBtn" class="btn btn-dark hidden">
+            Load more repositories
+          </button>
+        </div>
+
+        <div class="section">
+          <button id="refreshBtn" class="btn btn-blue">
+            Refresh profile and repositories
+          </button>
+          <button id="disconnectBtn" class="btn btn-red">
+            Disconnect this session
+          </button>
+          <p class="hint">
+            Disconnect clears this page's token from memory. To revoke
+            authorization itself, remove the app in your GitHub settings.
+          </p>
+        </div>
+      </section>
+    </section>
+
+    <footer>WebVibe AI · GitHub integration</footer>
+  </main>
+
+  <script>
+    "use strict";
+
+    // Public OAuth App Client ID. Never place a Client Secret here.
+    const CLIENT_ID = "Ov23liMxIRAhpAHn4XmB";
+
+    const DEVICE_URL = "https://github.com/login/device";
+    const DEVICE_CODE_URL = "https://github.com/login/device/code";
+    const TOKEN_URL = "https://github.com/login/oauth/access_token";
+    const API_URL = "https://api.github.com";
+
+    const $ = id => document.getElementById(id);
+
+    let deviceCode = "";
+    let accessToken = "";
+    let pollTimer = null;
+    let expiresAt = 0;
+    let pollInterval = 5;
+    let nextRepoPage = 1;
+    let currentUsername = "";
+    let busy = false;
+
+    function setStatus(message, type = "") {
+      const el = $("status");
+      el.textContent = message;
+      el.className = "status" + (type ? " " + type : "");
+    }
+
+    function setBusy(value) {
+      busy = value;
+      $("connectBtn").disabled = value;
+      $("cancelBtn").disabled = value;
+    }
+
+    function stopPolling() {
+      if (pollTimer) {
+        clearTimeout(pollTimer);
+        pollTimer = null;
+      }
+      busy = false;
+    }
+
+    function resetConnection(message) {
+      stopPolling();
+      deviceCode = "";
+      accessToken = "";
+      currentUsername = "";
+      nextRepoPage = 1;
+
+      $("deviceSection").classList.add("hidden");
+      $("profileSection").classList.add("hidden");
+      $("connectBtn").classList.remove("hidden");
+      $("connectBtn").disabled = false;
+      $("repoList").replaceChildren();
+      $("loadMoreBtn").classList.add("hidden");
+
+      setStatus(message || "Ready to connect.");
+    }
+
+    async function requestJSON(url, options = {}) {
+      const response = await fetch(url, options);
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(
+          data.error_description ||
+          data.message ||
+          data.error ||
+          "Request failed (HTTP " + response.status + ")."
+        );
+      }
+      return data;
+    }
+
+    async function startAuthorization() {
+      if (busy) return;
+
+      if (!CLIENT_ID || CLIENT_ID.startsWith("YOUR_")) {
+        setStatus("Add your GitHub OAuth App Client ID.", "error");
+        return;
+      }
+
+      stopPolling();
+      setBusy(true);
+      setStatus("Requesting a GitHub device code...");
+
+      try {
+        const data = await requestJSON(DEVICE_CODE_URL, {
+          method: "POST",
+          headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            client_id: CLIENT_ID,
+            scope: "read:user"
+          })
+        });
+
+        if (!data.device_code || !data.user_code) {
+          throw new Error("GitHub did not return a device code.");
+        }
+
+        deviceCode = data.device_code;
+        pollInterval = Math.max(5, data.interval || 5);
+        expiresAt = Date.now() + (data.expires_in || 900) * 1000;
+
+        $("deviceCode").textContent = data.user_code;
+        $("verifyBtn").href = data.verification_uri || DEVICE_URL;
+        $("deviceSection").classList.remove("hidden");
+        setStatus("Enter the code on GitHub. Waiting for authorization...");
+
+        schedulePoll(0);
+      } catch (error) {
+        setBusy(false);
+        setStatus(
+          "Could not start GitHub authorization. " +
+          error.message +
+          " If the browser reports a CORS/network error, use a trusted server-side proxy.",
+          "error"
+        );
+      }
+    }
+
+    function schedulePoll(delaySeconds) {
+      if (!busy || !deviceCode) return;
+
+      pollTimer = setTimeout(
+        pollAuthorization,
+        Math.max(0, delaySeconds) * 1000
+      );
+    }
+
+    async function pollAuthorization() {
+      pollTimer = null;
+
+      if (!busy || !deviceCode) return;
+
+      if (Date.now() >= expiresAt) {
+        stopPolling();
+        deviceCode = "";
+        $("deviceSection").classList.add("hidden");
+        $("connectBtn").disabled = false;
+        setStatus("The device code expired. Start again for a new code.", "error");
+        return;
+      }
+
+      try {
+        const response = await fetch(TOKEN_URL, {
+          method: "POST",
+          headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            client_id: CLIENT_ID,
+            device_code: deviceCode,
+            grant_type:
+              "urn:ietf:params:oauth:grant-type:device_code"
+          })
+        });
+
+        const data = await response.json().catch(() => ({}));
+
+        if (data.access_token) {
+          accessToken = data.access_token;
+          deviceCode = "";
+          stopPolling();
+          $("deviceSection").classList.add("hidden");
+          $("connectBtn").classList.add("hidden");
+          setStatus("Authorization successful. Loading your GitHub profile...", "ok");
+          await loadProfile();
+          return;
+        }
+
+        if (data.error === "authorization_pending") {
+          setStatus("Waiting for you to approve the request on GitHub...");
+        } else if (data.error === "slow_down") {
+          pollInterval += 5;
+          setStatus("GitHub requested a slower polling interval...");
+        } else if (data.error === "access_denied") {
+          resetConnection("You denied the GitHub authorization request.");
+          return;
+        } else if (data.error === "expired_token") {
+          resetConnection("The device code expired. Please start again.");
+          return;
+        } else if (data.error) {
+          throw new Error(data.error_description || data.error);
+        } else if (!response.ok) {
+          throw new Error("Token request failed (HTTP " + response.status + ").");
+        }
+
+        schedulePoll(pollInterval);
+      } catch (error) {
+        stopPolling();
+        $("connectBtn").disabled = false;
+        setStatus(
+          "Authorization request failed: " + error.message +
+          " If the browser reports a CORS/network error, a backend or managed integration is required.",
+          "error"
+        );
+      }
+    }
+
+    async function githubFetch(path) {
+      if (!accessToken) throw new Error("Not connected to GitHub.");
+
+      return requestJSON(API_URL + path, {
+        headers: {
+          "Accept": "application/vnd.github+json",
+          "Authorization": "Bearer " + accessToken,
+          "X-GitHub-Api-Version": "2022-11-28"
+        }
+      });
+    }
+
+    async function loadProfile() {
+      try {
+        const user = await githubFetch("/user");
+
+        currentUsername = user.login;
+        $("avatar").src = user.avatar_url || "";
+        $("displayName").textContent = user.name || user.login;
+        $("username").textContent = "@" + user.login;
+        $("profileLink").href = user.html_url;
+        $("profileSection").classList.remove("hidden");
+
+        $("repoList").replaceChildren();
+        nextRepoPage = 1;
+        await loadRepositories(true);
+
+        setStatus("Connected as @" + user.login + ".", "ok");
+      } catch (error) {
+        accessToken = "";
+        $("profileSection").classList.add("hidden");
+        $("connectBtn").classList.remove("hidden");
+        $("connectBtn").disabled = false;
+        setStatus("Could not load your GitHub data: " + error.message, "error");
+      }
+    }
+
+    async function loadRepositories(firstPage = false) {
+      if (!currentUsername) return;
+
+      $("loadMoreBtn").disabled = true;
+      $("loadMoreBtn").textContent = "Loading...";
+
+      try {
+        const page = nextRepoPage;
+        const repos = await githubFetch(
+          "/users/" + encodeURIComponent(currentUsername) +
+          "/repos?sort=updated&per_page=20&page=" + page
+        );
+
+        if (!Array.isArray(repos)) {
+          throw new Error("Unexpected repository response.");
+        }
+
+        if (firstPage && repos.length === 0) {
+          const empty = document.createElement("div");
+          empty.className = "empty";
+          empty.textContent = "No public repositories found.";
+          $("repoList").appendChild(empty);
+        }
+
+        repos.forEach(repo => {
+          const link = document.createElement("a");
+          link.className = "repo";
+          link.href = repo.html_url;
+          link.target = "_blank";
+          link.rel = "noopener noreferrer";
+
+          const name = document.createElement("div");
+          name.className = "repo-name";
+          name.textContent = repo.name + (repo.private ? " · Private" : "");
+
+          const description = document.createElement("div");
+          description.className = "repo-description";
+          description.textContent = repo.description || "No description provided.";
+
+          const meta = document.createElement("div");
+          meta.className = "repo-meta";
+          meta.textContent =
+            (repo.language || "Language not specified") +
+            " · ★ " + repo.stargazers_count +
+            " · " + (repo.fork ? "Fork" : "Repository");
+
+          link.append(name, description, meta);
+          $("repoList").appendChild(link);
+        });
+
+        nextRepoPage++;
+
+        $("loadMoreBtn").classList.toggle("hidden", repos.length < 20);
+        $("loadMoreBtn").textContent = "Load more repositories";
+      } catch (error) {
+        setStatus("Could not load repositories: " + error.message, "error");
+      } finally {
+        $("loadMoreBtn").disabled = false;
+      }
+    }
+
+    $("connectBtn").addEventListener("click", startAuthorization);
+
+    $("cancelBtn").addEventListener("click", () => {
+      resetConnection("Authorization cancelled.");
+    });
+
+    $("loadMoreBtn").addEventListener("click", () => {
+      loadRepositories(false);
+    });
+
+    $("refreshBtn").addEventListener("click", async () => {
+      if (!accessToken) return;
+      setStatus("Refreshing GitHub data...");
+      await loadProfile();
+    });
+
+    $("disconnectBtn").addEventListener("click", () => {
+      resetConnection(
+        "Disconnected locally. To revoke GitHub access, visit GitHub Settings → Applications."
+      );
+    });
+  </script>
+</body>
+</html>
